@@ -1,0 +1,56 @@
+import numpy as np
+from scipy import stats
+from sklearn.metrics import r2_score
+
+class PredictiveModels:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.models = {}
+
+    def fit(self):
+        self.models['linear'] = np.polyfit(self.x, self.y, 1)
+        self.models['quadratic'] = np.polyfit(self.x, self.y, 2)
+        self.models['cubic'] = np.polyfit(self.x, self.y, 3)
+
+    def predict(self, x, model_name):
+        return np.polyval(self.models[model_name], x)
+
+    def print_equation(self, model_name):
+        coeffs = self.models[model_name]
+        equation = " + ".join(f"{coeff} * x^{i}" for i, coeff in enumerate(coeffs[::-1]))
+        print(f"{model_name.capitalize()} Model: y = {equation}")
+
+    def print_r2_score(self, model_name):
+        y_pred = self.predict(self.x, model_name)
+        print(f"{model_name.capitalize()} Model R^2 Score: {r2_score(self.y, y_pred)}")
+
+    def print_p_value(self, model_name):
+        _, _, _, p_value, _ = stats.linregress(self.x, self.y)
+        print(f"{model_name.capitalize()} Model p-value: {p_value}")
+
+
+batch_sizes = np.array([108, 115, 106, 97, 95, 91, 97, 83, 83, 78, 54, 67, 56, 53, 61, 115, 81, 78, 30, 45, 99, 32, 25, 28, 90, 89])
+machine_efficiencies = np.array([95, 96, 95, 97, 93, 94, 95, 93, 92, 86, 73, 80, 65, 69, 77, 96, 87, 89, 60, 63, 95, 61, 55, 56, 94, 93])
+
+models = PredictiveModels(batch_sizes, machine_efficiencies)
+models.fit()
+
+
+for model_name in ['linear', 'quadratic', 'cubic']:
+    models.print_equation(model_name)
+
+
+x_values = [30, 60, 90]
+for x in x_values:
+    for model_name in ['linear', 'quadratic', 'cubic']:
+        y = models.predict(x, model_name)
+        print(f"{model_name.capitalize()} Model Prediction for x={x}: {y}")
+
+
+for model_name in ['linear', 'quadratic', 'cubic']:
+    models.print_r2_score(model_name)
+
+
+for model_name in ['linear', 'quadratic', 'cubic']:
+    models.print_p_value(model_name)
