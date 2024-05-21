@@ -1,0 +1,32 @@
+# Datos de entrenamiento (X_train) y etiquetas (y_train)
+X_train = [[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]]
+y_train = [10.0, 20.0, 30.0]
+
+# Datos de prueba (X_test)
+X_test = [[2.0, 3.0], [4.0, 5.0]]
+
+# Elegir el número de vecinos (K)
+K = 2
+
+# Calcular las distancias entre los puntos de prueba y entrenamiento
+distances = []
+for i in range(len(X_test)):
+    dist = []
+    for j in range(len(X_train)):
+        d = ((X_test[i][0] - X_train[j][0]) ** 2 + (X_test[i][1] - X_train[j][1]) ** 2) ** 0.5
+        dist.append(d)
+    distances.append(dist)
+
+# Encontrar los índices de los K vecinos más cercanos
+neighbors = []
+for i in range(len(X_test)):
+    indices = sorted(range(len(distances[i])), key=lambda x: distances[i][x])[:K]
+    neighbors.append(indices)
+
+# Calcular la predicción promediando los valores de los vecinos
+predictions = []
+for i in range(len(X_test)):
+    prediction = sum(y_train[j] for j in neighbors[i]) / K
+    predictions.append(prediction)
+
+print("Predicciones:", predictions)
